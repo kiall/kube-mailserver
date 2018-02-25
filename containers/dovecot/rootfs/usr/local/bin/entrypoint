@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -euo pipefail
+IFS=$'\n\t'
+
+echo "HOSTNAME: ${HOSTNAME}" >> /tmp/gotpl-values.yaml
+echo "SUBMISSION_HOST: ${SUBMISSION_HOST}" >> /tmp/gotpl-values.yaml
+echo "MYSQL_HOST: ${MYSQL_HOST}" >> /tmp/gotpl-values.yaml
+echo "MYSQL_DBNAME: ${MYSQL_DBNAME}" >> /tmp/gotpl-values.yaml
+echo "MYSQL_USER: ${MYSQL_USER}" >> /tmp/gotpl-values.yaml
+echo "MYSQL_PASS: ${MYSQL_PASS}" >> /tmp/gotpl-values.yaml
+
+echo "Using gotpl-values:"
+cat /tmp/gotpl-values.yaml
+
+echo "Rendering templates:"
+find /etc/ -name \*.tmpl ! -name "gotpl-values.yaml.tmpl" -exec bash -c "eval /usr/local/bin/gotpl {} < /tmp/gotpl-values.yaml > \$(echo {} | sed -e 's/\.[^.]*$//') && echo Rendering {}" \;
+
+echo "Starting Dovecot:"
+exec dovecot -F -c /etc/dovecot/dovecot.conf

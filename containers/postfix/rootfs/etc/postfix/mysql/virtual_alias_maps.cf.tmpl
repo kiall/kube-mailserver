@@ -1,0 +1,5 @@
+user = {{ .MYSQL_USER }}
+password = {{ .MYSQL_PASS }}
+hosts = {{ .MYSQL_HOST }}
+dbname = {{ .MYSQL_DBNAME }}
+query = SELECT goto FROM alias WHERE address='%s' AND active = true

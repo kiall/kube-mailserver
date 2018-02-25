@@ -1,0 +1,7 @@
+user = {{ .MYSQL_USER }}
+password = {{ .MYSQL_PASS }}
+hosts = {{ .MYSQL_HOST }}
+dbname = {{ .MYSQL_DBNAME }}
+#query = SELECT domain FROM domain WHERE domain='%s'
+#optional query to use when relaying for backup MX
+query = SELECT domain FROM domain WHERE domain='%s' and backupmx = false and active = true

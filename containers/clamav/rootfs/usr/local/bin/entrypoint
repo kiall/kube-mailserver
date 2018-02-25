@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -euo pipefail
+IFS=$'\n\t'
+
+touch /tmp/gotpl-values.yaml
+
+echo "Using gotpl-values:"
+cat /tmp/gotpl-values.yaml
+
+echo "Rendering templates:"
+find /etc/ -name \*.tmpl ! -name "gotpl-values.yaml.tmpl" -exec bash -c "eval /usr/local/bin/gotpl {} < /tmp/gotpl-values.yaml > \$(echo {} | sed -e 's/\.[^.]*$//') && echo Rendering {}" \;
+
+echo "Replacing /dev/log with symlink to sidecar:"
+ln -sf /mnt/syslog-ng-sidecar/log /dev/log
+
+if [ ! -f /mnt/clamav/main.cvd ]; then
+  echo "Updating ClamAV definitions:"
+  freshclam
+fi
+
+echo "Starting ClamAV:"
+exec clamd
